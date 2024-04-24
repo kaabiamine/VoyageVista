@@ -2,7 +2,7 @@
 include_once '../../Model/ReservationModel.php';
 include_once "../../Controller/ReservationController.php";
 $reservationController = new ReservationController();
-$reservations = $reservationController->getAllReservations();
+$reservations = $reservationController->getReservationsByUserID(1);
 ?>
 
 
@@ -16,11 +16,15 @@ $reservations = $reservationController->getAllReservations();
 <?php require_once('./components/navbar.php'); ?>
 <!-- Services Start -->
 <div class="container-fluid bg-light service py-5">
+    <div class="text-center mt-4">
+        <a class="btn btn-info rounded-pill py-3 px-5" href="AfficherPayements.php">View Payment History</a>
+    </div>
     <div class="container py-5">
         <div class="mx-auto text-center mb-5" style="max-width: 900px;">
             <h5 class="section-title px-3">Reservations</h5>
             <h1 class="mb-0">Your reservations</h1>
         </div>
+
         <?php
         foreach ($reservations as $reservation){
         ?>

@@ -2,7 +2,7 @@
 include_once '../../Model/ReservationModel.php';
 include_once "../../Controller/ReservationController.php";
 $reservationController = new ReservationController();
-$reservations = $reservationController->getReservationsByUserID(2);
+$reservations = $reservationController->getReservationsByUserID(1);
 ?>
 
 
