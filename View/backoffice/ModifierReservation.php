@@ -31,7 +31,7 @@ $reservation = $reservationController->getReservationById($reservationId);
         (int)$_POST['nb_enfants'],
         (int)$_POST['nb_adultes']  ,
         0,
-        1
+        (int)$_POST['id-user']
     );
 
     $reservationController = new ReservationController();
@@ -111,12 +111,6 @@ $reservation = $reservationController->getReservationById($reservationId);
                                         <div class="form-group">
                                             <label for="date_reservation">Date Reservation</label>
                                             <input type="datetime-local" class="form-control" id="date_reservation" name="date_reservation" value="<?= $dateReservation; ?>">
-                                        </div>
-                                    </div>
-                                    <div class="form-check form-check-flat form-check-primary">
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <input type="number" class="form-control" id="status" name="status" value="<?= $status; ?>">
                                         </div>
                                     </div>
                                     <div class="form-check form-check-flat form-check-primary">

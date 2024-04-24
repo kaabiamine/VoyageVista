@@ -154,7 +154,6 @@ class ReservationController {
                    telephone = ?,
                    nb_enfants = ?,
                    nb_adultes = ?,
-                     status = ?,
                    user_id = ?
                    WHERE id = ?"; // Add WHERE clause for filtering
 
@@ -168,7 +167,6 @@ class ReservationController {
             $stmt->bindValue(5, $telephone, PDO::PARAM_STR);
             $stmt->bindValue(6, $nbEnfants, PDO::PARAM_INT);
             $stmt->bindValue(7, $nbAdultes, PDO::PARAM_INT);
-            $stmt->bindValue(7, $status, PDO::PARAM_BOOL);
             $stmt->bindValue(8, $user_id, PDO::PARAM_INT);
             $stmt->bindValue(9, $reservationId, PDO::PARAM_INT);
 
@@ -179,6 +177,27 @@ class ReservationController {
             return false;
         }
     }
+
+    public function Confirmer_payement(int $idReservation): bool {
+        // Establish the database connection
+        $pdo = Connection::getConnection();
+
+        // SQL query to update the 'status' field to true where 'id' matches
+        $sql = "UPDATE reservation SET status = true WHERE id = ?";
+
+        try {
+            // Prepare and execute the query
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(1, $idReservation, PDO::PARAM_INT); // Bind the reservation ID
+            $stmt->execute();
+
+            return true; // Indicate successful update
+        } catch (PDOException $e) {
+            // If there's an error, return false to indicate failure
+            return false;
+        }
+    }
+
 
 
 

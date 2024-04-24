@@ -2,7 +2,7 @@
 include_once '../../Model/ReservationModel.php';
 include_once "../../Controller/ReservationController.php";
 $reservationController = new ReservationController();
-$reservations = $reservationController->getReservationsByUserID(3);
+$reservations = $reservationController->getReservationsByUserID(2);
 ?>
 
 
@@ -111,11 +111,20 @@ $reservations = $reservationController->getReservationsByUserID(3);
                                                 <td>
                                                     <form action="confirmer-payement.php" method="get">
                                                         <input type="hidden" name="reservationId" value="<?php echo $reservationId; ?>">
-                                                        <button type="submit" class="btn btn-info" id="confirmer-button-<?php echo $reservationId; ?>">
-                                                            Confirmer
-                                                        </button>
+
+                                                        <?php if ($reservation->isStatus()): ?> <!-- Check if status is true -->
+                                                            <button type="submit" class="btn btn-success" id="confirmer-button-<?php echo $reservationId; ?>" disabled> <!-- Green button, disabled -->
+                                                                Confirmed
+                                                            </button>
+                                                        <?php else: ?> <!-- If status is false, button is blue and enabled -->
+                                                            <button type="submit" class="btn btn-info" id="confirmer-button-<?php echo $reservationId; ?>"> <!-- Blue button, enabled -->
+                                                                Confirmer
+                                                            </button>
+                                                        <?php endif; ?>
+
                                                     </form>
                                                 </td>
+
 
 
                                             </tr>
