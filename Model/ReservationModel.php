@@ -12,6 +12,8 @@ class ReservationModel {
     private string $nb_adultes;
     private bool $status;
 
+    private int $user_id;
+
     /**
      * @param string $date_reservation
      * @param string $nom
@@ -21,7 +23,7 @@ class ReservationModel {
      * @param string $nb_enfants
      * @param string $nb_adultes
      */
-    public function __construct($date_reservation, $nom, $prenom, $email, $telephone, $nb_enfants, $nb_adultes ,$status)
+    public function __construct($date_reservation, $nom, $prenom, $email, $telephone, $nb_enfants, $nb_adultes ,$status , $user_id)
     {
         $this->date_reservation = $date_reservation;
         $this->nom = $nom;
@@ -31,6 +33,17 @@ class ReservationModel {
         $this->nb_enfants = $nb_enfants;
         $this->nb_adultes = $nb_adultes;
         $this->status = $status;
+        $this->user_id = $user_id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): void
+    {
+        $this->user_id = $user_id;
     }
 
     public function isStatus(): bool

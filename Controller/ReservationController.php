@@ -7,14 +7,14 @@ class ReservationController {
         $pdo = Connection::getConnection();
 
         // Prepare SQL statement
-        $sql = "INSERT INTO reservation (date_reservation, nom, prenom, email, telephone, nb_adultes,nb_enfants, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO reservation (date_reservation, nom, prenom, email, telephone, nb_adultes,nb_enfants, status ,user_id )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Prepare and bind parameters
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$reservation->getDateReservation(), $reservation->getNom(), $reservation->getPrenom(),
             $reservation->getEmail(), $reservation->getTelephone(), $reservation->getNbEnfants(),
-            $reservation->getNbAdultes(), $reservation->getStatus()]);
+            $reservation->getNbAdultes(), $reservation->isStatus(), $reservation->getUserId()]);
 
         return $stmt->rowCount(); // Return number of affected rows
     }
@@ -35,8 +35,49 @@ class ReservationController {
         // Create and return ReservationModel object
         return new ReservationModel($reservation['date_reservation'], $reservation['nom'], $reservation['prenom'],
             $reservation['email'], $reservation['telephone'], $reservation['nb_enfants'],
-            $reservation['nb_adultes'], $reservation['status']);
+            $reservation['nb_adultes'], $reservation['status'], $reservation['user_id']);
     }
+
+    public function getReservationsByUserID($userID) {
+        $pdo = Connection::getConnection();
+
+        // SQL query to fetch reservations for a specific user ID
+        $sql = "SELECT * FROM reservation WHERE user_id = :user_id";
+
+        // Prepare and execute the statement with named parameter
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':user_id', $userID, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Fetch all results as associative arrays
+        $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Initialize an array to hold ReservationModel objects
+        $reservationModels = [];
+
+        // Loop through each fetched reservation and create ReservationModel instances
+        foreach ($reservations as $reservation) {
+            $reservationModel = new ReservationModel(
+                $reservation['date_reservation'],
+                $reservation['nom'],
+                $reservation['prenom'],
+                $reservation['email'],
+                $reservation['telephone'],
+                $reservation['nb_enfants'],
+                $reservation['nb_adultes'],
+                $reservation['status'],
+                $reservation['user_id']
+            );
+            $reservationModel->setId($reservation['id']); // Set the reservation ID
+
+            // Add to the list of ReservationModel objects
+            $reservationModels[] = $reservationModel;
+        }
+
+        // Return the array of ReservationModel objects
+        return $reservationModels;
+    }
+
     public function deleteReservationById(int $id): bool {
         $pdo = Connection::getConnection();
 
@@ -80,7 +121,8 @@ class ReservationController {
                 $reservation['telephone'],
                 $reservation['nb_enfants'],
                 $reservation['nb_adultes'] ,
-                $reservation['status']
+                $reservation['status'],
+                $reservation['user_id']
             );
             $reservationModel->setId($reservation['id']); // Set the ID
             $reservationModels[] = $reservationModel;
@@ -99,9 +141,10 @@ class ReservationController {
         $prenom = $reservationModel->getPrenom(); // Assuming string first name
         $email = $reservationModel->getEmail(); // Assuming string email
         $telephone = $reservationModel->getTelephone(); // Assuming string phone number
-        $nbEnfants = $reservationModel->getNbEnfants(); // Assuming integer number of children
-        $nbAdultes = $reservationModel->getNbAdultes(); // Assuming integer number of adults
-        $status = $reservationModel->getStatus(); // Assuming integer status
+        $nbEnfants = $reservationModel->getNbEnfants();
+        $nbAdultes = $reservationModel->getNbAdultes();
+        $status = $reservationModel->isStatus();
+        $user_id = $reservationModel->getUserId();
         // Build the UPDATE SQL statement dynamically
         $sql = "UPDATE reservation SET 
                    date_reservation = ?,
@@ -111,31 +154,29 @@ class ReservationController {
                    telephone = ?,
                    nb_enfants = ?,
                    nb_adultes = ?,
-                     status = ?
+                     status = ?,
+                   user_id = ?
                    WHERE id = ?"; // Add WHERE clause for filtering
 
         try {
             $stmt = $pdo->prepare($sql);
 
-            // Bind values to prepared statement with appropriate types
-            $stmt->bindValue(1, $dateReservation, PDO::PARAM_STR); // String for date
-            $stmt->bindValue(2, $nom, PDO::PARAM_STR); // String for name
-            $stmt->bindValue(3, $prenom, PDO::PARAM_STR); // String for first name
-            $stmt->bindValue(4, $email, PDO::PARAM_STR); // String for email
-            $stmt->bindValue(5, $telephone, PDO::PARAM_STR); // String for phone number
-            $stmt->bindValue(6, $nbEnfants, PDO::PARAM_INT); // Integer for number of children
-            $stmt->bindValue(7, $nbAdultes, PDO::PARAM_INT); // Integer for number of adults
+            $stmt->bindValue(1, $dateReservation, PDO::PARAM_STR);
+            $stmt->bindValue(2, $nom, PDO::PARAM_STR);
+            $stmt->bindValue(3, $prenom, PDO::PARAM_STR);
+            $stmt->bindValue(4, $email, PDO::PARAM_STR);
+            $stmt->bindValue(5, $telephone, PDO::PARAM_STR);
+            $stmt->bindValue(6, $nbEnfants, PDO::PARAM_INT);
+            $stmt->bindValue(7, $nbAdultes, PDO::PARAM_INT);
             $stmt->bindValue(7, $status, PDO::PARAM_BOOL);
-            $stmt->bindValue(8, $reservationId, PDO::PARAM_INT); // Integer for reservation ID
+            $stmt->bindValue(8, $user_id, PDO::PARAM_INT);
+            $stmt->bindValue(9, $reservationId, PDO::PARAM_INT);
 
-            // Execute the prepared statement for update
             $stmt->execute();
 
-            return true; // Return true on successful execution (no exceptions)
+            return true;
         } catch (PDOException $e) {
-            // Handle database errors (optional)
-            // ...
-            return false; // Return false on database errors
+            return false;
         }
     }
 

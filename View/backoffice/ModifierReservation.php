@@ -14,6 +14,8 @@ $reservation = $reservationController->getReservationById($reservationId);
         $telephone = $reservation->getTelephone();
         $nbEnfants = $reservation->getNbEnfants();
         $nbAdultes = $reservation->getNbAdultes();
+        $status = $reservation->isStatus();
+        $id_user = $reservation->getUserId();
     }
  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If submitted using POST, update the reservation
@@ -26,8 +28,10 @@ $reservation = $reservationController->getReservationById($reservationId);
         $_POST['prenom'],
         $_POST['email'],
         $_POST['telephone'],
-        (int)$_POST['nb_enfants'], // Cast to integer for safety
-        (int)$_POST['nb_adultes']  // Cast to integer for safety
+        (int)$_POST['nb_enfants'],
+        (int)$_POST['nb_adultes']  ,
+        0,
+        1
     );
 
     $reservationController = new ReservationController();
@@ -107,6 +111,18 @@ $reservation = $reservationController->getReservationById($reservationId);
                                         <div class="form-group">
                                             <label for="date_reservation">Date Reservation</label>
                                             <input type="datetime-local" class="form-control" id="date_reservation" name="date_reservation" value="<?= $dateReservation; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-check-flat form-check-primary">
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <input type="number" class="form-control" id="status" name="status" value="<?= $status; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-check-flat form-check-primary">
+                                        <div class="form-group">
+                                            <label for="id-user">user</label>
+                                            <input type="number" class="form-control" id="id-user" name="id-user" value="<?= $id_user; ?>">
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary mr-2">Update</button>

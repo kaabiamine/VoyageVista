@@ -13,39 +13,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $nb_enfants = $_POST['CategoriesSelect'] ;
         $nb_adultes = $_POST['SelectPerson'] - $nb_enfants;
 
+        if (isset ($_POST['datetime']) && isset($_POST['name']) && isset($_POST['prenom']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['SelectPerson']) && isset($_POST['CategoriesSelect'])) {
+            // Create a new ReservationModel instance
+            $reservation = new ReservationModel($date_reservation, $nom, $prenom, $email, $telephone, $nb_enfants, $nb_adultes,0 , 1);
+//            echo $reservation->getDateReservation();
+//            echo $reservation->getNom();
+//            echo $reservation->getPrenom();
+//            echo $reservation->getEmail();
+//            echo $reservation->getTelephone();
+//            echo $reservation->getNbEnfants();
+//            echo $reservation->getNbAdultes();
 
-
-
-if (isset ($_POST['datetime']) && isset($_POST['name']) && isset($_POST['prenom']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['SelectPerson']) && isset($_POST['CategoriesSelect'])) {
-    // Create a new ReservationModel instance
-    $reservation = new ReservationModel($date_reservation, $nom, $prenom, $email, $telephone, $nb_enfants, $nb_adultes,0);
-    echo $reservation->getDateReservation();
-    echo $reservation->getNom();
-    echo $reservation->getPrenom();
-    echo $reservation->getEmail();
-    echo $reservation->getTelephone();
-    echo $reservation->getNbEnfants();
-    echo $reservation->getNbAdultes();
-    $reservationController = new ReservationController();
-
-    // Add the reservation to the database
-
-    $result = $reservationController->createReservation($reservation);
-}
-
-    // Optionally, set any additional properties of the reservation here
-    // $reservation->setSpecialRequest($special_request);
-
-    // Instantiate ReservationController
-
-
-    if ($result) {
-        // Reservation added successfully
-        echo "Reservation added successfully!";
-    } else {
-        // Failed to add reservation
-        echo "Failed to add reservation.";
-    }
+            $reservationController = new ReservationController();
+            $result = $reservationController->createReservation($reservation);
+            if ($result) {
+                echo "Reservation added successfully!";
+            } else {
+                echo "Failed to add reservation.";
+            }
+        }
 }
 
 ?>
