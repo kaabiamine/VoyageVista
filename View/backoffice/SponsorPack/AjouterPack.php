@@ -3,7 +3,7 @@ include_once '../../../Model/SponsorPackModel.php';
 include_once "../../../Controller/SponsorPackController.php";
 $sponsorPackController = new SponsorPackController();
 
-$uploadDirectory = __DIR__ . '../../../uploads/'; // Ensure the directory path has a trailing slash
+$uploadDirectory = '../../uploads/'; // Ensure the directory path has a trailing slash
 
 // Check if the upload directory exists, create it if it doesn't
 if (!is_dir($uploadDirectory)) {
@@ -93,10 +93,10 @@ function getUploadErrorMessage($errorCode) {
 
 <body>
 <div class="container-scroller">
-<!--    --><?php //require_once('../components/navbar.php'); ?><!-- <!-- Include navigation bar -->-->
+    <?php require_once('../components/navbar.php'); ?>
 
     <div class="container-fluid page-body-wrapper">
-<!--        --><?php //require_once('../components/sidebar.php'); ?><!-- <!-- Include sidebar -->-->
+        <?php require_once('../components/sidebar.php'); ?> <!-- Include sidebar -->
 
         <div class="main-panel">
             <div class="content-wrapper">
@@ -107,64 +107,51 @@ function getUploadErrorMessage($errorCode) {
                                 <h4 class="card-title">Add Sponsor Pack</h4>
                                 <p class="card-description">Provide details to add a new sponsor pack</p>
 
-                                <form class="forms-sample" method="post" enctype="multipart/form-data" >
+                                <form class="forms-sample" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label for="pack_name">Pack Name</label>
                                         <input type="text" class="form-control" id="pack_name" name="pack_name">
+                                        <span class="text-danger" id="pack_name_error"></span>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="pack_description">Pack Description</label>
                                         <textarea class="form-control" id="pack_description" name="pack_description"></textarea>
+                                        <span class="text-danger" id="pack_description_error"></span>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="pack_price">Pack Price</label>
                                         <input type="text" class="form-control" id="pack_price" name="pack_price">
+                                        <span class="text-danger" id="pack_price_error"></span>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="pack_status">Pack Status</label>
                                         <select class="form-control" id="pack_status" name="pack_status">
-                                            <option value="1">Active</option> <!-- Returns true -->
-                                            <option value="0">Inactive</option> <!-- Returns false -->
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
                                         </select>
                                     </div>
-
-
 
                                     <div class="form-group">
                                         <label for="updated_at">Updated At</label>
                                         <input type="date" class="form-control" id="updated_at" name="updated_at">
+                                        <span class="text-danger" id="updated_at_error"></span>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="image_pack">Image Pack</label>
                                         <input type="file" class="form-control" id="image_pack" name="image_pack" accept="image/*">
-                                        <span class="text-danger" id="image_pack_error"></span> <!-- Error span for validation -->
+                                        <span class="text-danger" id="image_pack_error"></span>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="AfficherPacks.php" class="btn btn-light">Cancel</a> <!-- Cancel Button -->
-
+                                    <a href="AfficherPacks.php" class="btn btn-light">Cancel</a>
                                 </form>
 
-                                <script>
-                                    function validatePackForm() {
-                                        let isValid = true; // Variable to check if the form is valid
 
-                                        // Validation logic for form fields
-                                        const packName = document.getElementById('pack_name').value.trim();
-                                        if (packName === '') {
-                                            isValid = false;
-                                            alert("Pack Name cannot be empty");
-                                        }
-
-                                        // Further validation checks can be added here for other fields
-
-                                        return isValid; // Return true if the form is valid
-                                    }
-                                </script>
+                                <script src="../input-validation/SponsorPack.js"></script>
 
                             </div> <!-- End of card body -->
                         </div> <!-- End of card -->
