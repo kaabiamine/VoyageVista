@@ -101,7 +101,7 @@ else {
                                         <input type="text" class="form-control" id="sponsor_website" name="sponsor_website" value="<?= $sponsorWebsite; ?>">
                                     </div>
                                     <button type="submit" class="btn btn-primary mr-2">Update</button>
-                                    <button type="button" class="btn btn-light" onclick="window.location.href='AjouterSponsor.php'">Cancel</button>
+                                    <a href="AfficherSponsors.php" class="btn btn-light">Cancel</a>
                                 </form>
                             </div>
                         </div>

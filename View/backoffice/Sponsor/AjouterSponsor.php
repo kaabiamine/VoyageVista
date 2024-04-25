@@ -110,7 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <span class="text-danger" id="sponsor_website_error"></span>
                                     </div>
                                     <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                    <button class="btn btn-light">Cancel</button>
+                                    <a href="AfficherSponsors.php" class="btn btn-light">Cancel</a>
+
                                 </form>
 
                                 <script>
