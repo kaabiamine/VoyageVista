@@ -2,6 +2,8 @@
 include_once '../../../Model/SponsorModel.php';
 include_once "../../../Controller/SponsorController.php";
 // Handle form submission
+$idPack = $_GET['pack_id'];
+echo $idPack;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if the file was uploaded
     if (isset($_FILES['sponsor_logo']) && $_FILES['sponsor_logo']['error'] === UPLOAD_ERR_OK) {
@@ -38,9 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Attempt to add the sponsor
                 $sponsorController = new SponsorController();
-                if ($sponsorController->addSponsor($newSponsor)) {
+                $newSponsorID = $sponsorController->addSponsor($newSponsor);
+                if ($newSponsorID > 0) {
                     // Redirect to a success page or back to the sponsor list
-                    header("Location: AfficherPacks.php");
+//                    $newSponsorID = $sponsorController->getLastInsertId();
+                    header("Location: AjouterContrat.php?sponsor_id=$newSponsorID&pack_id=$idPack");
                     exit; // Ensure script does not continue executing after redirection
                 } else {
                     $error = "Failed to add sponsor. Please try again.";

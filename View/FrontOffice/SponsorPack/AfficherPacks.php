@@ -48,6 +48,7 @@ $uploadDirectory = '../../uploads/'; // Ensure this path leads to your uploads d
                                     <small class="fa fa-star text-primary"></small>
                                 <?php endfor; ?>
                             </div>
+
                             <p class="mb-4"><?= $pack['pack_description'] ?? 'No description available' ?></p>
                         </div>
                         <div class="row bg-primary rounded-bottom mx-0">
@@ -55,7 +56,10 @@ $uploadDirectory = '../../uploads/'; // Ensure this path leads to your uploads d
                                 <a href="#" class="btn-hover btn text-white py-2 px-4">Read More</a> <!-- Verify the links -->
                             </div>
                             <div class="col-6 text-end px-0">
-                                <a href="#" class="btn-hover btn text-white py-2 px-4">Book Now</a> <!-- Adjust booking link -->
+                                <?php
+                                $packId = $pack['id'];
+                                ?>
+                                <a href="AjouterSponsor.php?pack_id=<?= htmlspecialchars($packId) ?>" class="btn-hover btn text-white py-2 px-4">Book Now</a>> <!-- Adjust booking link -->
                             </div>
                         </div>
                     </div>
