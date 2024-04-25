@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Validate file type and size
         if (in_array($fileType, $acceptableFileTypes) && $fileSize <= $maxFileSize) {
-            // Define the target path for storing the file
             $targetDir = '../../uploads/'; // Update with your target directory
             $targetFilePath = $targetDir . $fileName;
 

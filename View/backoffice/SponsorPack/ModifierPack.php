@@ -92,10 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 <div class="container-scroller">
-<!--    --><?php //require_once('../components/navbar.php'); ?>
+    <?php require_once('../components/navbar.php'); ?>
 
     <div class="container-fluid page-body-wrapper">
-<!--        --><?php //require_once('../components/sidebar.php'); ?><!-- <!-- Include sidebar -->-->
+        <?php require_once('../components/sidebar.php'); ?> <!-- Include sidebar -->
         <div class="main-panel">
             <div class="content-wrapper">
                 <div class="row">
