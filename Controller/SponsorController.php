@@ -110,5 +110,31 @@ class SponsorController {
             return null; // Return null if an error occurs
         }
     }
+
+    public function deleteSponsorById($sponsorId) : bool{
+        try {
+            // Establish database connection
+            $pdo = Connection::getConnection();
+
+            // Prepare the SQL statement for deleting a sponsor
+            $stmt = $pdo->prepare("DELETE FROM sponsor WHERE id = ?");
+
+            // Bind the parameter and execute the query
+            $stmt->execute([$sponsorId]);
+
+            // Check if any rows were affected by the query
+            if ($stmt->rowCount() > 0) {
+                // If rows were affected, the deletion was successful
+                return true; // Return true for success
+            } else {
+                return false; // Return false if no sponsor was found with the given ID
+            }
+        } catch (PDOException $e) {
+            // Handle database connection errors
+            echo "Error deleting sponsor: " . $e->getMessage();
+            return false; // Return false if an error occurs
+        }
+    }
+
 }
 ?>

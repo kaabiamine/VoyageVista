@@ -62,7 +62,7 @@ $sponsors = $sponsorController->getAllSponsors(); // Retrieve all sponsors
                                                 <td>
                                                     <a href="ModifierSponsor.php?id=<?php echo $sponsor->getId(); ?>"
                                                        class="btn btn-warning">Edit</a>
-                                                    <a href="../../../Controller/SponsorController.php?id=<?php echo $sponsor->getId(); ?>&action=delete"
+                                                    <a href="DeleteSponsor.php?id=<?php echo $sponsor->getId(); ?>&action=delete"
                                                        class="btn btn-danger">Delete</a>
                                             </tr>
                                         <?php endforeach; ?>
