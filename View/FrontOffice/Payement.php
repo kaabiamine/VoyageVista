@@ -1,30 +1,58 @@
 <?php
+require_once '../../Controller/PayementController.php';
+require_once '../../Model/PayementModel.php';
+require_once '../Libraries/FPDF/fpdf.php'; // Include FPDF
 
- $reservationID =$_GET['reservation_id'];
-
+$reservationID = $_GET['reservation_id']; // Get the reservation ID from the URL
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once '../../Controller/PayementController.php';
-    require_once '../../Model/PayementModel.php';
-
-    //$reservationId = $_POST['reservation_id'];
     $reservation = $_POST['reservationID'];
     $mantant = $_POST['mantant'];
     $paymentMethod = $_POST['paymentMethod'];
     $rib = $_POST['rib'];
     $datePayement = new DateTime();
 
+    // Create the payment object
     $payement = new PayementModel($reservation, $mantant, $paymentMethod, $rib, $datePayement);
 
-    //PayementController::addPayement($payement);
+    // Attempt to add the payment
     if (PayementController::addPayement($payement)) {
+        // Create the PDF document
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 12);
+
+        // Add content to the PDF
+        $pdf->Cell(0, 10, 'Payment Receipt', 0, 1, 'C');
+        $pdf->Ln(10); // Line break
+        $pdf->Cell(0, 10, 'Reservation ID: ' . $reservationID, 0, 1);
+        $pdf->Cell(0, 10, 'Amount: ' . $mantant, 0, 1);
+        $pdf->Cell(0, 10, 'Payment Method: ' . $paymentMethod, 0, 1);
+        $pdf->Cell(0, 10, 'RIB: ' . $rib, 0, 1);
+        $pdf->Cell(0, 10, 'Date: ' . $datePayement->format('Y-m-d'), 0, 1);
+
+        // Ensure the PDF directory exists
+        $pdfDir = '../PDF/Generation/';
+        if (!file_exists($pdfDir)) {
+            mkdir($pdfDir, 0777, true); // Create the directory with full permissions
+        }
+
+        // Save the PDF to the specified directory
+        $pdfFileName = 'Payment_Receipt_' . $reservationID . '.pdf'; // Unique filename
+        $pdfFilePath = $pdfDir . $pdfFileName;
+        $pdf->Output('F', $pdfFilePath); // Save the PDF to the directory
+
+        echo "PDF saved at: " . $pdfFilePath;
+
+        // Redirect to the reservation list page
         header('Location: AfficherReservations.php');
     } else {
-        echo "<script>alert('Error adding payement');</script>";
+        echo "<script>alert('Error adding payment');</script>";
     }
 }
-
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
