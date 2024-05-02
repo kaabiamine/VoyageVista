@@ -1,19 +1,22 @@
 <?php
-// Include necessary models and controllers
+// Include necessary models, controllers, and FPDF library
 include_once '../../../Model/SponsorContractModel.php';
 include_once "../../../Controller/SponsorContractController.php";
+include_once "../../../Controller/SponsorController.php";
+include_once "../../../Controller/SponsorPackController.php";
+include_once '../../Libraries/FPDF/fpdf.php'; // FPDF for PDF generation
+
+// Get sponsor and pack IDs from the URL parameters
 $sponsor_id = $_GET['sponsor_id'];
 $pack_id = $_GET['pack_id'];
-echo "sponsor".$sponsor_id;
-echo $pack_id;
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get data from the POST request
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
     $payment_method = $_POST['payment_method'];
-    $contract_status = $_POST['contract_status'] === '1'; // true for active, false for inactive
-//    $sponsor_id = 1; // Example sponsor ID
-//    $sponsor_pack_id = 1; // Example sponsor pack ID
+    $contract_status = $_POST['contract_status'] === '1'; // Convert to boolean
 
     // Create a new contract model
     $contract = new SponsorContractModel(
@@ -27,18 +30,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pack_id
     );
 
-    // Instantiate the controller
+    // Instantiate the controllers
     $sponsorContractController = new SponsorContractController();
+    $sponsorController = new SponsorController();
+    $sponsorPackController = new SponsorPackController();
+
+    // Get the sponsor and sponsor pack data
+    $sponsor = $sponsorController->getSponsorById($sponsor_id);
+    $sponsorPack = $sponsorPackController->getPackByID($pack_id);
 
     // Attempt to add the contract
-    if ($sponsorContractController->addContract($contract)) {
+    if ($sponsorContractController->addContract($contract) ){
+        // Create a PDF for the contract
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 14);
+        $pdf->Cell(0, 15, 'Sponsor Contract', 0, 1, 'C');
+        $pdf->Ln(10);
+
+        $pdf->SetFont('Arial', '', 12);
+
+
+        $pdf->SetFillColor(200, 220, 255);
+        $pdf->Cell(0, 10, 'Sponsor Details', 0, 1, 'L', true);
+        $pdf->Cell(0, 10, 'Sponsor Name: ' . $sponsor->getSponsorName(), 0, 1);
+        $pdf->Cell(0, 10, 'Sponsor Email: ' . $sponsor->getSponsorEmail(), 0, 1);
+        $pdf->Cell(0, 10, 'Sponsor Phone: ' . $sponsor->getSponsorPhone(), 0, 1);
+        $pdf->Cell(0, 10, 'Sponsor Address: ' . $sponsor->getSponsorAddress(), 0, 1);
+        $pdf->Cell(0, 10, 'Sponsor Website: ' . $sponsor->getSponsorWebsite(), 0, 1);
+        $pdf->Ln(5);
+
+        // Section: Sponsor Pack Details
+        $pdf->SetFillColor(220, 220, 220); // Light gray background
+        $pdf->Cell(0, 10, 'Sponsor Pack Details', 0, 1, 'L', true);
+        $pdf->Cell(0, 10, 'Pack Name: ' . $sponsorPack['pack_name'], 0, 1);
+        $pdf->Cell(0, 10, 'Pack Description: ' . $sponsorPack['pack_description'], 0, 1);
+        $pdf->Cell(0, 10, 'Pack Price: ' . number_format($sponsorPack['pack_price'], 2), 0, 1);
+        $pdf->Ln(5);
+
+        // Section: Contract Details
+        $pdf->SetFillColor(230, 230, 230); // Slightly darker gray
+        $pdf->Cell(0, 10, 'Contract Details', 0, 1, 'L', true);
+        $pdf->Cell(0, 10, 'Start Date: ' . $start_date, 0, 1);
+        $pdf->Cell(0, 10, 'End Date: ' . $end_date, 0, 1);
+        $pdf->Cell(0, 10, 'Payment Method: ' . $payment_method, 0, 1);
+        $pdf->Cell(0, 10, 'Contract Status: ' . ($contract_status ? 'Active' : 'Inactive'), 0, 1);
+
+        $pdfDir = '../PDF/Contrat/';
+        if (!file_exists($pdfDir)) {
+            mkdir($pdfDir, 0777, true); // Create the directory if it doesn't exist
+        }
+
+
+        $pdfFileName = 'Sponsor_Contract_' . $sponsor_id . '_' . time() . '.pdf';
+        $pdfFilePath = $pdfDir . $pdfFileName;
+        $pdf->Output('F', $pdfFilePath); // Save the PDF to the specified directory
+        echo "PDF saved at: " . $pdfFilePath;
         header("Location: AfficherPacks.php");
         exit;
     } else {
-        $error = "Failed to add contract.";
+        echo "Failed to add contract.";
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
