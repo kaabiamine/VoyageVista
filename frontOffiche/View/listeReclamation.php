@@ -107,7 +107,7 @@ try {
                             <div class="dropdown-menu m-0">
                                 <a href="../View/addReclamation.php" class="dropdown-item">Ajouter une réclamation</a>
                                 <a href="../View/listeReclamation.php" class="dropdown-item">Liste de mes réclamations</a>
-                                <a href="" class="dropdown-item">Liste des réponses </a>
+                                <a href="../view/listeReponse.php" class="dropdown-item">Liste des réponses </a>
 
                             </div>
                         </div>

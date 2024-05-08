@@ -20,13 +20,25 @@ class ReclamationController {
             $query->bindValue(':sujet', $reclamation->getSujet());
             $query->bindValue(':description', $reclamation->getDescription());
             $query->bindValue(':status', $reclamation->getStatus());
-            $query->bindValue(':idUser', $reclamation->getIdUser());  // Ajout de l'idUser
+            $query->bindValue(':idUser', $reclamation->getIdUser());
             $query->execute();
+    
+            // Si la réclamation est ajoutée avec succès, ajoutez une notification
+            if ($query->rowCount() > 0) {
+                $this->addNotification("Nouvelle réclamation", "Une nouvelle réclamation a été ajoutée  " . $reclamation->getIdUser());
+            }
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
         }
     }
-    
+
+    function addNotification($subject, $message) {
+        $sql = "INSERT INTO notifications (subject, message) VALUES (:subject, :message)";
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':subject', $subject);
+        $query->bindValue(':message', $message);
+        $query->execute();
+    }
    
 
     public function getReclamations($idUser) {

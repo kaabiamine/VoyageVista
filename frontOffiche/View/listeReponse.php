@@ -1,69 +1,15 @@
 <?php
-require_once '../Models/reclamation.php';
-require_once '../Controllers/ReclamationController.php';
+
+require_once '../Controllers/reponseController.php';
 require_once '../cnx.php';
 
-// Initialisation des variables
-$reclamation = null;
-$error = "";
 
-// Création d'une instance du contrôleur avec la connexion à la base de données
-$reclamationController = new ReclamationController(Cnx::getConnexion());
 
-// Vérification si tous les champs du formulaire sont présents
-if (
-    isset($_POST["date"]) &&
-    isset($_POST["sujet"]) &&
-    isset($_POST["description"])
-) {
-    // Vérifier si la date entrée est égale à la date du jour
-    $submittedDate = new DateTime($_POST['date']);
-    $currentDate = new DateTime(); // Date du jour sans l'heure
+$db = Cnx::getConnexion();
+$controller = new ReclamationController($db);
+$reclamations = $controller->getReclamationsAndResponsesByUserId(1);
 
-    if ($submittedDate->format('Y-m-d') !== $currentDate->format('Y-m-d')) {
-        $error = "La date sélectionnée doit être la date d'aujourd'hui.";
-    } elseif( empty($_POST["sujet"]))  {
-        $error = "Le sujet ne peut pas être vides.";
-    } elseif(empty($_POST["description"]))  {
-        $error = "Description ne peut pas être vides.";
-    }elseif (!preg_match('/^[a-zA-Z .,]*$/', $_POST["sujet"])) {
-        $error  = "La sujet doit contenir uniquement des lettres, des points, des virgules et des espaces.";
-    }elseif (strlen($_POST["sujet"]) > 255) {
-        $error = "Le sujet ne peut pas dépasser 255 caractères.";
-    }elseif (strlen($_POST["description"]) > 255) {
-        $error = "La description ne peut pas dépasser 255 caractères.";
-    } elseif (!preg_match('/^[a-zA-Z .,]*$/', $_POST["description"])) {
-        $error  = "La description doit contenir uniquement des lettres, des points, des virgules et des espaces.";
-    } else {
-        
-        try {
-            // Création d'une nouvelle réclamation avec les données du formulaire
-            $reclamation = new Reclamation(
-                $submittedDate,
-                $_POST['sujet'],
-                $_POST['description']
-            );
-
-            // Ajout de la réclamation via le contrôleur
-            $reclamationController->addReclamation($reclamation);
-            header('Location: listeReclamation.php'); // Assurez-vous que le chemin est correct
-            exit;
-
-            // Optionnel: Redirection ou autres traitements après l'ajout...
-        } catch (Exception $e) {
-            $error = "Erreur lors de la conversion de la date : " . $e->getMessage();
-        }
-    }
-}
-
-// Affichage des erreurs
-if (!empty($error)) {
-    echo "<p style='color:red;'>$error</p>";
-}
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -152,7 +98,7 @@ if (!empty($error)) {
                         <a href="../View/index.html" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="services.html" class="nav-item nav-link">Services</a>
-                        <a href="packages.html" class="nav-item nav-link">Packages</a>
+                        <a href="packages.html" class="nav-item nav-link ">Packages</a>
                         <a href="blog.html" class="nav-item nav-link">Blog</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown ">Réclamation</a>
@@ -160,7 +106,6 @@ if (!empty($error)) {
                                 <a href="../View/addReclamation.php" class="dropdown-item">Ajouter une réclamation</a>
                                 <a href="../View/listeReclamation.php" class="dropdown-item">Liste de mes réclamations</a>
                                 <a href="../view/listeReponse.php" class="dropdown-item">Liste des réponses </a>
-
 
                             </div>
                         </div>
@@ -174,14 +119,12 @@ if (!empty($error)) {
 
         <!-- Header Start -->
         <div class="container-fluid bg-breadcrumb">
-
-     
             <div class="container text-center py-5" style="max-width: 900px;">
                 <h3 class="text-white display-3 mb-4">Réclamation</h1>
                 <ol class="breadcrumb justify-content-center mb-0">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                     <li class="breadcrumb-item"><a href="#">Réclamation</a></li>
-                    <li class="breadcrumb-item active text-white">Ajouter une réclamation </li>
+                    <li class="breadcrumb-item active text-white">Liste de Vos Réclamations et Réponses </li>
                    
                 </ol>    
             </div>
@@ -192,38 +135,36 @@ if (!empty($error)) {
         <div class="container-fluid packages py-5">
             <div class="container py-5">
                 <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-                    <h5 class="section-title px-3">Réclamation</h5>
-                    <h1 class="mb-0">Ajouter une réclamation </h1>
-               
+                    <h5 class="section-title px-3">Liste de Vos Réclamations et Réponses</h5>
+
+                    <br>
+                    <br>
+                    <br>
+                
+                    <table class="table">
+            <thead>
+                <tr>
                     
-
-                    <br>
-                    <br>
-
-                    <?php if (!empty($error)): ?>
-            <div class="alert alert-danger" role="alert">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
-        <?php endif; ?>
-                    <form method="POST" action="">
-                    <div class="form-group">
-                        <input type="date" name="date" class="form-control" id="exampleFormControlInput1" placeholder="Date de réclamation*" required>
-                    </div>
-             
-                    <br>
-                    <div class="form-group">
-                        <input type="text" name="sujet" class="form-control" id="exampleFormControlInput1" placeholder="sujet * " >
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3" placeholder="description"></textarea>
-                    </div>
-            
-                    <br>
-                    <div class="col-12">
-                        <button class="btn btn-primary w-100 py-3" type="submit">Envoyer</button>
-                    </div>
-                  </form>
+                    <th>Sujet</th>
+                    <th>Description</th>
+                    <th>Réponse</th>
+                    <th>date de réponse </th>
+                </tr>
+            </thead>
+            <tbody>
+              
+            <?php foreach ($reclamations as $reclamation): ?>
+        <tr>
+            <td><?= htmlspecialchars($reclamation['sujet']) ?></td>
+            <td><?= htmlspecialchars($reclamation['description']) ?></td>
+            <td><?= htmlspecialchars($reclamation['texteReponse'] ?? 'Pas de réponse') ?></td>
+            <td><?= htmlspecialchars($reclamation['dateReponse'] ?? 'N/A') ?></td>
+        </tr>
+        <?php endforeach; ?>
+               
+            </tbody>
+        </table>
+               
                     <br>
              
                 </div>

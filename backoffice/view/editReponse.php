@@ -3,14 +3,53 @@ require_once '../Controller/ReclamationController.php';
 require_once '../cnx1.php';
 
 $db = Cnx1::getConnexion();
-$reclamationController = new ReclamationController(Cnx1::getConnexion());
-$reclamations = $reclamationController->getReclamations();
+$controller = new ReclamationController($db);
 
 // Récupérez les notifications
-$notifications= $reclamationController-> fetchNotifications($db);
+$notifications= $controller->fetchNotifications($db);
 $num_notifications = count($notifications);
 
-?>
+// Vérification du type de requête
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Traitement de la soumission du formulaire
+    $responseId = isset($_POST['responseId']) ? intval($_POST['responseId']) : 0;
+    $newText = isset($_POST['reponse']) ? $_POST['reponse'] : '';
+
+    if ($responseId <= 0) {
+        echo "ID de réponse invalide.";
+        exit;
+    }
+
+    // Vérification que le texte de la réponse n'est pas vide
+    if (empty($newText)) {
+        echo "Le champ de réponse ne peut pas être vide.";
+        exit;
+    }
+
+    // Assurer que le texte contient des lettres et n'est pas seulement des chiffres ou des caractères spéciaux
+    if (!preg_match('/[a-zA-Z]/', $newText)) {
+        echo "La réponse doit contenir au moins une lettre.";
+        exit;
+    }
+
+    if ($responseId > 0 && !empty($newText)) {
+        $result = $controller->updateResponse($responseId, $newText);
+        if ($result) {
+            header("Location: listeReponse.php"); 
+            
+            // Redirection vers une autre page ou affichage d'un message de succès
+        } else {
+            echo "Erreur lors de la mise à jour de la réponse.";
+        }
+    } else {
+        echo "Données du formulaire invalides.";
+    }
+} else {
+    // Chargement du formulaire avec les données existantes
+    $responseId = isset($_GET['responseId']) ? intval($_GET['responseId']) : 0;
+    $responseData = $controller->getReponseById($responseId);
+    $oldResponse = $responseData ? $responseData['texteReponse'] : '';
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +58,11 @@ $num_notifications = count($notifications);
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>CelestialUI Admin</title>
-  <!-- base:css -->
+ 
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="../vendors/select2/select2.min.css">
+  <link rel="stylesheet" href="../vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+
   <link rel="stylesheet" href="../vendors/typicons.font/font/typicons.css">
   <link rel="stylesheet" href="../vendors/css/vendor.bundle.base.css">
   <!-- endinject -->
@@ -32,7 +75,8 @@ $num_notifications = count($notifications);
 <body>
   <div class="container-scroller">
     <!-- partial:../../partials/_navbar.html -->
-    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <!-- partial:../../partials/_navbar.html -->
+      <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
           <a class="navbar-brand brand-logo" href="../view/index.html"><h2>Voyage Visita
           </h2></a>
@@ -137,7 +181,6 @@ $num_notifications = count($notifications);
         <?php endforeach; ?>
     </div>
 </li>
-
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle  pl-0 pr-0" href="#" data-toggle="dropdown" id="profileDropdown">
                 <i class="typcn typcn-user-outline mr-0"></i>
@@ -190,17 +233,18 @@ $num_notifications = count($notifications);
         </div>
       <!-- partial -->
       <!-- partial:../../partials/_sidebar.html -->
+      
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
             <div class="d-flex sidebar-profile">
               <div class="sidebar-profile-image">
-                <img src="../images/faces/face29.png" alt="image">
+                <img src="../../images/faces/face29.png" alt="image">
                 <span class="sidebar-status-indicator"></span>
               </div>
               <div class="sidebar-profile-name">
                 <p class="sidebar-name">
-                 Admin
+                  Kenneth Osborne
                 </p>
                 <p class="sidebar-designation">
                   Welcome
@@ -220,7 +264,7 @@ $num_notifications = count($notifications);
             <p class="sidebar-menu-title">Dash menu</p>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="../index.html">
+            <a class="nav-link" href="../../index.html">
               <i class="typcn typcn-device-desktop menu-icon"></i>
               <span class="menu-title">Dashboard <span class="badge badge-primary ml-3">New</span></span>
             </a>
@@ -228,74 +272,147 @@ $num_notifications = count($notifications);
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <i class="typcn typcn-briefcase menu-icon"></i>
-              <span class="menu-title">Gestion de réclamation</span>
+              <span class="menu-title">UI Elements</span>
               <i class="typcn typcn-chevron-right menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../view/listeReclamation.php">Liste des réclamations</a></li>
-                <li class="nav-item"> <a class="nav-link" href="../view/listeReponse.php">Liste des reponses</a></li>
-
+                <li class="nav-item"> <a class="nav-link" href="../../pages/ui-features/buttons.html">Buttons</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/ui-features/dropdowns.html">Dropdowns</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/ui-features/typography.html">Typography</a></li>
               </ul>
             </div>
           </li>
-       
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
+              <i class="typcn typcn-film menu-icon"></i>
+              <span class="menu-title">Form elements</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"><a class="nav-link" href="../../pages/forms/basic_elements.html">Basic Elements</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+              <i class="typcn typcn-chart-pie-outline menu-icon"></i>
+              <span class="menu-title">Charts</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="charts">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/charts/chartjs.html">ChartJs</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+              <i class="typcn typcn-th-small-outline menu-icon"></i>
+              <span class="menu-title">Tables</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/tables/basic-table.html">Basic table</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+              <i class="typcn typcn-compass menu-icon"></i>
+              <span class="menu-title">Icons</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="icons">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/icons/mdi.html">Mdi icons</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+              <i class="typcn typcn-user-add-outline menu-icon"></i>
+              <span class="menu-title">User Pages</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/samples/login.html"> Login </a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/samples/register.html"> Register </a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
+              <i class="typcn typcn-globe-outline menu-icon"></i>
+              <span class="menu-title">Error pages</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="error">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../../pages/samples/error-404.html"> 404 </a></li>
+                <li class="nav-item"> <a class="nav-link" href="../../pages/samples/error-500.html"> 500 </a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../pages/documentation/documentation.html">
+              <i class="typcn typcn-document-text menu-icon"></i>
+              <span class="menu-title">Documentation</span>
+            </a>
+          </li>
         </ul>
-
+        <ul class="sidebar-legend">
+          <li>
+            <p class="sidebar-menu-title">Category</p>
+          </li>
+          <li class="nav-item"><a href="#" class="nav-link">#Sales</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">#Marketing</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">#Growth</a></li>
+        </ul>
       </nav>
+      
       <!-- partial -->
-      <div class="main-panel">
+      <div class="main-panel">        
         <div class="content-wrapper">
           <div class="row">
-         
-           
-            <div class="col-lg-12 grid-margin stretch-card">
+        
+            <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Liste des réclamations</h4>
-               
-                  <div class="table-responsive">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>
-                            client
-                          </th>
-                          <th>
-                           Date de réclamation
-                          </th>
-                          <th>
-                            Sujet de réclamation 
-                          </th>
-                          <th>
-                            Description
-                          </th>
-                          <th>
-                            status 
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                <?php foreach ($reclamations as $reclamation): ?>
-                <tr>
-                    <td><?= htmlspecialchars($reclamation['idReclamation']) ?></td>
-                    <td><?= htmlspecialchars($reclamation['date']) ?></td>
-                    <td><?= htmlspecialchars($reclamation['sujet']) ?></td>
-                    <td><?= htmlspecialchars($reclamation['description']) ?></td>
-                    <td><?= htmlspecialchars($reclamation['status']) ?></td>
-                    <td>
-                    <a href="repondreReclamation.php?id=<?= $reclamation['idReclamation'] ?>" class="btn btn-success">Répondre</a>
+                  <h4 class="card-title">Modifier une réponse</h4>
+                  <p class="card-description">
+                 Modifier une réponse 
+                  </p>
+        <form  class="forms-sample" action="editReponse.php" method="POST">
+   
+            <input type="hidden" name="responseId" value="<?php echo htmlspecialchars($responseId); ?>">
+            <?php
+            // Affichage des messages d'erreur de PHP
+            echo isset($errorMessage) ? htmlspecialchars($errorMessage) : '';
+            ?>
 
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-                    </table>
-                  </div>
-                </div>
+<div class="form-group">
+                      <label for="exampleInputName1">Nouvelle Réponse:</label>
+                      <textarea name="reponse" id="reponse" required><?php echo htmlspecialchars($oldResponse); ?></textarea>
+                    
+                    </div>
+
+           
+                    <button type="submit" class="btn btn-primary mr-2">Modifier</button>
+                    <button class="btn btn-light">Annuler</button>
+          
+        </form>
+        </div>
               </div>
             </div>
+          
+          
+         
            
+         
           </div>
         </div>
         <!-- content-wrapper ends -->
@@ -314,20 +431,23 @@ $num_notifications = count($notifications);
   </div>
   <!-- container-scroller -->
   <!-- base:js -->
-  <script src="../vendors/js/vendor.bundle.base.js"></script>
+  <script src="../../vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
-  <!-- Plugin js for this page-->
-  <!-- End plugin js for this page-->
   <!-- inject:js -->
-  <script src="../js/off-canvas.js"></script>
-  <script src="../js/hoverable-collapse.js"></script>
-  <script src="../js/template.js"></script>
-  <script src="../js/settings.js"></script>
-  <script src="../js/todolist.js"></script>
+  <script src="../../js/off-canvas.js"></script>
+  <script src="../../js/hoverable-collapse.js"></script>
+  <script src="../../js/template.js"></script>
+  <script src="../../js/settings.js"></script>
+  <script src="../../js/todolist.js"></script>
   <!-- endinject -->
   <!-- plugin js for this page -->
+  <script src="../../vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="../../vendors/select2/select2.min.js"></script>
   <!-- End plugin js for this page -->
   <!-- Custom js for this page-->
+  <script src="../../js/file-upload.js"></script>
+  <script src="../../js/typeahead.js"></script>
+  <script src="../../js/select2.js"></script>
   <!-- End custom js for this page-->
   <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -357,7 +477,12 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+</body>
 
 </body>
 
 </html>
+
+    <?php
+}
+?>

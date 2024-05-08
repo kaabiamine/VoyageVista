@@ -5,6 +5,9 @@ require_once '../Controller/ReclamationController.php';
 $db = Cnx1::getConnexion();
 $reclamationController = new ReclamationController($db);
 $reclamations = $reclamationController->getReclamationsWithResponses();
+// Récupérez les notifications
+$notifications= $reclamationController-> fetchNotifications($db);
+$num_notifications = count($notifications);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,54 +108,33 @@ $reclamations = $reclamationController->getReclamationsWithResponses();
                 </a>
               </div>
             </li>
-            <li class="nav-item dropdown  d-flex">
-              <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
-                <i class="typcn typcn-bell mr-0"></i>
-                <span class="count bg-danger">2</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-                <a class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-success">
-                      <i class="typcn typcn-info-large mx-0"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                    <p class="font-weight-light small-text mb-0">
-                      Just now
-                    </p>
-                  </div>
-                </a>
-                <a class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-warning">
-                      <i class="typcn typcn-cog mx-0"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <h6 class="preview-subject font-weight-normal">Settings</h6>
-                    <p class="font-weight-light small-text mb-0">
-                      Private message
-                    </p>
-                  </div>
-                </a>
-                <a class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-info">
-                      <i class="typcn typcn-user-outline mx-0"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                    <p class="font-weight-light small-text mb-0">
-                      2 days ago
-                    </p>
-                  </div>
-                </a>
-              </div>
-            </li>
+            <li class="nav-item dropdown d-flex">
+    <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
+        <i class="typcn typcn-bell mr-0"></i>
+        <span class="count bg-danger"><?php echo $num_notifications; ?></span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+        <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+        <?php foreach ($notifications as $notification): ?>
+        <a class="dropdown-item preview-item" href="#">
+            <div class="preview-thumbnail">
+                <div class="preview-icon bg-success">
+                    <i class="typcn typcn-info-large mx-0"></i>
+                </div>
+            </div>
+            <div class="preview-item-content">
+                <h6 class="preview-subject font-weight-normal"><?php echo $notification['subject']; ?></h6>
+                <p class="font-weight-light small-text mb-0">
+                    <?php echo $notification['message']; ?>
+                </p>
+            </div>
+            <span class="remove-notification" data-id="<?php echo $notification['id']; ?>" style="cursor:pointer; color: red;">
+                <i class="typcn typcn-delete-outline"></i>
+            </span>
+        </a>
+        <?php endforeach; ?>
+    </div>
+</li>
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle  pl-0 pr-0" href="#" data-toggle="dropdown" id="profileDropdown">
                 <i class="typcn typcn-user-outline mr-0"></i>
@@ -280,6 +262,7 @@ $reclamations = $reclamationController->getReclamationsWithResponses();
                 <th>Description</th>
                 <th>Réponse</th>
                 <th>Date réponse</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -291,6 +274,22 @@ $reclamations = $reclamationController->getReclamationsWithResponses();
                 <td><?= htmlspecialchars($reclamation['description']) ?></td>
                 <td><?= htmlspecialchars($reclamation['reponseTexte'] ?? 'Pas de réponse') ?></td>
                 <td><?= htmlspecialchars($reclamation['dateReponse']) ?></td>
+                <td>
+        <!-- Bouton pour modifier -->
+        <form action="editReponse.php" method="GET">
+            <input type="hidden" name="responseId" value="<?= $reclamation['idReponse']; ?>">
+            <button type="submit"  class="btn btn-primary">Modifier</button>
+        </form>
+    </td>
+                    <td>
+        <!-- Formulaire pour suppression -->
+        <form action="deleteResponse.php" method="POST">
+            <input type="hidden" name="responseId" value="<?= $reclamation['idReponse']; ?>">
+            <button type="submit"  class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?');">Supprimer</button>
+        </form>
+    </td>
+
+                
 
             </tr>
             <?php endforeach; ?>
@@ -334,6 +333,34 @@ $reclamations = $reclamationController->getReclamationsWithResponses();
   <!-- End plugin js for this page -->
   <!-- Custom js for this page-->
   <!-- End custom js for this page-->
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const removeIcons = document.querySelectorAll('.remove-notification');
+
+    removeIcons.forEach(icon => {
+        icon.addEventListener('click', function(e) {
+            e.preventDefault();
+            const notificationId = this.getAttribute('data-id');
+            const notificationItem = this.closest('.preview-item');
+
+            fetch('delete_notification.php', {
+                method: 'POST',
+                body: JSON.stringify({ id: notificationId }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    notificationItem.remove(); // Supprime l'élément de notification de l'UI
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
 </body>
 
 </html>
