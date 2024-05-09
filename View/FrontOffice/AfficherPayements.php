@@ -2,7 +2,7 @@
 include_once '../../Model/PayementModel.php';
 include_once "../../Controller/PayementController.php";
 $payementController = new PayementController();
-$payements = $payementController->getPayementsByUserId(2);
+$payements = $payementController->getPayementsByUserId(1);
 ?>
 
 <!DOCTYPE html>

@@ -19,7 +19,7 @@ class ReservationController {
         return $stmt->rowCount(); // Return number of affected rows
     }
 
-    public function getReservationById($id) {
+    public static function getReservationById($id) {
         $pdo = Connection::getConnection();
 
         // Prepare SQL statement
