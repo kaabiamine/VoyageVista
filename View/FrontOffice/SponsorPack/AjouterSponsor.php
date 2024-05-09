@@ -16,16 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Define acceptable file types and maximum file size (e.g., 2MB)
         $acceptableFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
         $maxFileSize = 2 * 1024 * 1024; // 2MB
-
-        // Validate file type and size
         if (in_array($fileType, $acceptableFileTypes) && $fileSize <= $maxFileSize) {
             $targetDir = '../../uploads/'; // Update with your target directory
             $targetFilePath = $targetDir . $fileName;
-
-            // Move the file to the target directory
             if (move_uploaded_file($fileTempPath, $targetFilePath)) {
-                // File successfully uploaded
-                // Create a new SponsorModel with the submitted data
                 $newSponsor = new SponsorModel(
                     0,
                     $_POST['sponsor_name'],
