@@ -84,14 +84,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Create and save the PDF document
             $pdf = new FPDF();
             $pdf->AddPage();
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(0, 10, 'Payment Receipt', 0, 1, 'C');
+
+            $pdf->Image('./assets/images/logo.jpg', 10, 8, 33);
+
+            $pdf->SetFont('Helvetica', 'B', 18);
+            $pdf->SetTextColor(33, 150, 243); // Set the color for the title (Blue)
+            $pdf->Cell(0, 20, 'Payment Receipt', 0, 1, 'C');
+
             $pdf->Ln(10);
-            $pdf->Cell(0, 10, 'Reservation ID: ' . $reservationID, 0, 1);
-            $pdf->Cell(0, 10, 'Amount: ' . $amount, 0, 1);
-            $pdf->Cell(0, 10, 'Payment Method: Stripe', 0, 1);
-            $pdf->Cell(0, 10, 'RIB: ' . $rib, 0, 1);
-            $pdf->Cell(0, 10, 'Date: ' . $datePayment->format('Y-m-d'), 0, 1);
+
+            $pdf->SetFont('Helvetica', 'B', 12);
+            $pdf->SetTextColor(30, 30, 30); // Set the color for the headers (Dark Gray)
+
+            $pdf->Cell(0, 10, 'Reservation Details', 0, 1, 'L');
+            $pdf->SetFont('Helvetica', '', 12);
+            $pdf->SetFillColor(230, 230, 230); // Light gray background for the cells
+            $pdf->Cell(50, 10, 'Name:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $getreservation->getNom() . ' ' . $getreservation->getPrenom(), 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Email:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $getreservation->getEmail(), 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Phone:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $getreservation->getTelephone(), 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Adults:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $getreservation->getNbAdultes(), 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Children:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $getreservation->getNbEnfants(), 1, 1, 'L', false);
+
+            $pdf->Ln(10);
+
+            $pdf->SetFont('Helvetica', 'B', 12);
+            $pdf->SetTextColor(30, 30, 30); // Set the color for the headers (Dark Gray)
+            $pdf->Cell(0, 10, 'Payment Information', 0, 1, 'L');
+            $pdf->SetFont('Helvetica', '', 12);
+            $pdf->Cell(50, 10, 'Amount:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, '$' . $amount, 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Payment Method:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, 'Stripe', 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'RIB:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $rib, 1, 1, 'L', false);
+            $pdf->Cell(50, 10, 'Date:', 1, 0, 'L', true);
+            $pdf->Cell(0, 10, $datePayment->format('Y-m-d'), 1, 1, 'L', false);
 
             $pdfDir = '../PDF/Generation/';
             if (!file_exists($pdfDir)) {
