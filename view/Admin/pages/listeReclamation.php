@@ -1,0 +1,323 @@
+<?php
+include '../../../controller/user_con.php';
+include '../../../controller/verify_login.php';
+require_once '../../../cnx1.php';
+require_once '../../../controller/ReclamationController.php';
+require_once '../../../controller/notificationController.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+if (isset($_SESSION['user'])) {
+  $user1 = $_SESSION['user'];
+} else {
+  header('Location: ../login.php');
+  exit;
+}
+$user = new UserCon("user");
+$user = $user->getUser($user1['id']);
+
+$db = Cnx1::getConnexion();
+$reclamationController = new ReclamationController(Cnx1::getConnexion());
+$reclamations = $reclamationController->getReclamations();
+
+$notificationController = new notificationController(Cnx1::getConnexion());
+$notifications= $notificationController-> fetchNotifications(Cnx1::getConnexion());
+$num_notifications = count($notifications);
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>CelestialUI Admin</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="../vendors/typicons.font/font/typicons.css">
+  <link rel="stylesheet" href="../vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="../css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="../images/favicon.png" />
+</head>
+
+<body>
+  <div class="row" id="proBanner">
+
+  </div>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="index.php"><img src="../images/logo.svg" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="index.php"><img src="../images/logo-mini.svg" alt="logo" /></a>
+        <button class="navbar-toggler navbar-toggler align-self-center d-none d-lg-flex" type="button" data-toggle="minimize">
+          <span class="typcn typcn-th-menu"></span>
+        </button>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav mr-lg-2">
+          <li class="nav-item  d-none d-lg-flex">
+            <a class="nav-link" href="#">
+              Calendar
+            </a>
+          </li>
+          <li class="nav-item  d-none d-lg-flex">
+            <a class="nav-link active" href="#">
+              Statistic
+            </a>
+          </li>
+          <li class="nav-item  d-none d-lg-flex">
+            <a class="nav-link" href="#">
+              Employee
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item d-none d-lg-flex  mr-2">
+            <a class="nav-link" href="#">
+              Help
+            </a>
+          </li>
+          <li class="nav-item dropdown d-flex">
+            <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+              <i class="typcn typcn-message-typing"></i>
+              <span class="count bg-success">2</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Messages</p>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="images/faces/face4.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal">David Grey
+                  </h6>
+                  <p class="font-weight-light small-text mb-0">
+                    The meeting is cancelled
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="images/faces/face2.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal">Tim Cook
+                  </h6>
+                  <p class="font-weight-light small-text mb-0">
+                    New product launch
+                  </p>
+                </div>
+              </a>
+              <a class="dropdown-item preview-item">
+                <div class="preview-thumbnail">
+                  <img src="images/faces/face3.jpg" alt="image" class="profile-pic">
+                </div>
+                <div class="preview-item-content flex-grow">
+                  <h6 class="preview-subject ellipsis font-weight-normal"> Johnson
+                  </h6>
+                  <p class="font-weight-light small-text mb-0">
+                    Upcoming board meeting
+                  </p>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown d-flex">
+    <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
+        <i class="typcn typcn-bell mr-0"></i>
+        <span class="count bg-danger"><?php echo $num_notifications; ?></span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+        <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
+        <?php foreach ($notifications as $notification): ?>
+        <a class="dropdown-item preview-item" href="#">
+            <div class="preview-thumbnail">
+                <div class="preview-icon bg-success">
+                    <i class="typcn typcn-info-large mx-0"></i>
+                </div>
+            </div>
+            <div class="preview-item-content">
+                <h6 class="preview-subject font-weight-normal"><?php echo $notification['subject']; ?></h6>
+                <p class="font-weight-light small-text mb-0">
+                    <?php echo $notification['message']; ?>
+                </p>
+            </div>
+            <span class="remove-notification" data-id="<?php echo $notification['id']; ?>" style="cursor:pointer; color: red;">
+                <i class="typcn typcn-delete-outline"></i>
+            </span>
+        </a>
+        <?php endforeach; ?>
+    </div>
+</li>
+
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle  pl-0 pr-0" href="#" data-toggle="dropdown" id="profileDropdown">
+              <i class="typcn typcn-user-outline mr-0"></i>
+              <span class="nav-profile-name">Evan Morales</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item">
+                <i class="typcn typcn-cog text-primary"></i>
+                Settings
+              </a>
+              <a class="dropdown-item">
+                <i class="typcn typcn-power text-primary"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="typcn typcn-th-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_settings-panel.html -->
+      <div class="theme-setting-wrapper">
+        <div id="settings-trigger"><i class="typcn typcn-cog-outline"></i></div>
+        <div id="theme-settings" class="settings-panel">
+          <i class="settings-close typcn typcn-delete-outline"></i>
+          <p class="settings-heading">SIDEBAR SKINS</p>
+          <div class="sidebar-bg-options" id="sidebar-light-theme">
+            <div class="img-ss rounded-circle bg-light border mr-3"></div>
+            Light
+          </div>
+          <div class="sidebar-bg-options selected" id="sidebar-dark-theme">
+            <div class="img-ss rounded-circle bg-dark border mr-3"></div>
+            Dark
+          </div>
+          <p class="settings-heading mt-2">HEADER SKINS</p>
+          <div class="color-tiles mx-0 px-4">
+            <div class="tiles success"></div>
+            <div class="tiles warning"></div>
+            <div class="tiles danger"></div>
+            <div class="tiles primary"></div>
+            <div class="tiles info"></div>
+            <div class="tiles dark"></div>
+            <div class="tiles default border"></div>
+          </div>
+        </div>
+      </div>
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <?php require 'menu.php'; ?>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+         
+           
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Liste des réclamations</h4>
+               
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>
+                            client
+                          </th>
+                          <th>
+                           Date de réclamation
+                          </th>
+                          <th>
+                            Sujet de réclamation 
+                          </th>
+                          <th>
+                            Description
+                          </th>
+                          <th>
+                            status 
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                <?php foreach ($reclamations as $reclamation): ?>
+                <tr>
+                    <td><?= htmlspecialchars($reclamation['idReclamation']) ?></td>
+                    <td><?= htmlspecialchars($reclamation['date']) ?></td>
+                    <td><?= htmlspecialchars($reclamation['sujet']) ?></td>
+                    <td><?= htmlspecialchars($reclamation['description']) ?></td>
+                    <td><?= htmlspecialchars($reclamation['status']) ?></td>
+                    <td>
+                    <a href="repondreReclamation.php?id=<?= $reclamation['idReclamation'] ?>" class="btn btn-success">Répondre</a>
+
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+        <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="https://www.bootstrapdash.com/" target="_blank">bootstrapdash.com</a> 2020</span>
+              <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Free <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap dashboard </a>templates from Bootstrapdash.com</span>
+            </div>
+          </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <script src="../vendors/js/vendor.bundle.base.js"></script>
+  <script src="../js/off-canvas.js"></script>
+  <script src="../js/hoverable-collapse.js"></script>
+  <script src="../js/template.js"></script>
+  <script src="../js/settings.js"></script>
+  <script src="../js/todolist.js"></script>
+  <script src="../vendors/progressbar.js/progressbar.min.js"></script>
+  <script src="../vendors/chart.js/Chart.min.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../admin/js/controle_de_saisie.js"></script>
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const removeIcons = document.querySelectorAll('.remove-notification');
+
+    removeIcons.forEach(icon => {
+        icon.addEventListener('click', function(e) {
+            e.preventDefault();
+            const notificationId = this.getAttribute('data-id');
+            const notificationItem = this.closest('.preview-item');
+
+            fetch('delete_notification.php', {
+                method: 'POST',
+                body: JSON.stringify({ id: notificationId }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    notificationItem.remove(); // Supprime l'élément de notification de l'UI
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+</body>
+
+</html>
