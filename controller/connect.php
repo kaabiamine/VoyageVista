@@ -34,5 +34,4 @@ class config
         return $url;
     }
 }
-config::getConnexion();
-config::getCurrentUrl();
+

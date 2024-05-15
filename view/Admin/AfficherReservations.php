@@ -1,9 +1,33 @@
 <?php
 include_once '../../model/ReservationModel.php';
 include_once "../../controller/ReservationController.php";
+
+// USER VERIFICATION ===========================================================
+include_once '../../controller/verify_login.php';
+
+if (isset($_SESSION['user'])) {
+    $user1 = $_SESSION['id'];
+    $role = $_SESSION['role'];
+    if ($role == 2) {
+        header('Location: ../login.php');
+    }
+}else{
+    header('Location: ../login.php');
+}
+//==============================================================================
+
+
+
+
+
 $reservationController = new ReservationController();
 //$reservations = $reservationController->getReservationsByUserID(1);
 $reservations = $reservationController->getAllReservations();
+
+
+
+
+
 ?>
 
 
@@ -27,7 +51,7 @@ $reservations = $reservationController->getAllReservations();
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Liste des Reservation </h4>
+                                <h4 class="card-title">Reservations </h4>
 
                                 <div class="table-responsive">
                                     <table class="table table-striped">
