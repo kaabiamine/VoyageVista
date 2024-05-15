@@ -1,15 +1,13 @@
 <?php
 
-class Cnx1 {
+ class Cnx1 {
     private static $instance = null;
     private const SERVERNAME = "localhost";
     private const USERNAME = "root";
     private const PASSWORD = "";
     private const DATABASE = "web1";
 
-    private function __construct() {
-      
-    }
+
 
     public static function getConnexion() {
         if (self::$instance === null) {
@@ -23,5 +21,7 @@ class Cnx1 {
         return self::$instance;
     }
 }
+
+
 
 ?>

@@ -13,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (isset($_SESSION['user'])) {
   $user1 = $_SESSION['user'];
 } else {
-  header('Location: ../login.php');
+  header('Location: ../../login.php');
   exit;
 }
 

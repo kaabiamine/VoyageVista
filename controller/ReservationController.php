@@ -1,10 +1,10 @@
 <?php
 
-include_once '../cnx1.php';
+include_once __DIR__ . '/../Connection.php';
 include_once __DIR__ . '/../Model/ReservationModel.php';
 class ReservationController {
     public function createReservation($reservation) {
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         // Prepare SQL statement
         $sql = "INSERT INTO reservation (date_reservation, nom, prenom, email, telephone, nb_adultes,nb_enfants, status ,user_id )
@@ -20,7 +20,7 @@ class ReservationController {
     }
 
     public static function getReservationById($id) {
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         // Prepare SQL statement
         $sql = "SELECT * FROM reservation WHERE id = ?";
@@ -39,7 +39,7 @@ class ReservationController {
     }
 
     public function getReservationsByUserID($userID) {
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         // SQL query to fetch reservations for a specific user ID
         $sql = "SELECT * FROM reservation WHERE user_id = :user_id";
@@ -79,7 +79,7 @@ class ReservationController {
     }
 
     public function deleteReservationById(int $id): bool {
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         // Prepare the DELETE SQL statement
         $sql = "DELETE FROM reservation WHERE id = ?";
@@ -105,7 +105,7 @@ class ReservationController {
 
 
     public function getAllReservations() {
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         $sql = "SELECT * FROM reservation";
 
@@ -132,8 +132,10 @@ class ReservationController {
     }
 
     public function updateReservationById(int $idReservation, ReservationModel $reservationModel): bool {
-        $pdo = Cnx1::getConnexion();
-        $reservationId = $idReservation;
+        $pdo = Connection::getConnection();
+
+        // Extract data from ReservationModel object with type hints
+        $reservationId = $idReservation; // Assuming integer ID
         $dateReservation = $reservationModel->getDateReservation(); // Assuming string date
         $nom = $reservationModel->getNom(); // Assuming string name
         $prenom = $reservationModel->getPrenom(); // Assuming string first name
@@ -178,7 +180,7 @@ class ReservationController {
 
     public function Confirmer_payement(int $idReservation): bool {
         // Establish the database connection
-        $pdo = Cnx1::getConnexion();
+        $pdo = Connection::getConnection();
 
         // SQL query to update the 'status' field to true where 'id' matches
         $sql = "UPDATE reservation SET status = true WHERE id = ?";
