@@ -1,7 +1,19 @@
 <?php
 include_once '../../../Model/SponsorModel.php';
 include_once "../../../Controller/SponsorController.php";
+// USER VERIFICATION ===========================================================
+include_once '../../../controller/verify_login.php';
 
+if (isset($_SESSION['user'])) {
+    $user1 = $_SESSION['id'];
+    $role = $_SESSION['role'];
+    if ($role == 2) {
+        header('Location: ../../login.php');
+    }
+}else{
+    header('Location: ../../login.php');
+}
+//==============================================================================
 $sponsorID = $_GET['id'];
 $sponsorController = new SponsorController();
 $sponsor = $sponsorController->getSponsorbyId($sponsorID);

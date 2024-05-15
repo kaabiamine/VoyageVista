@@ -2,7 +2,19 @@
 // Include the necessary files and controllers
 require_once('../components/head.php');
 require_once('../../../Controller/StatSponsorController.php');
+// USER VERIFICATION ===========================================================
+include_once '../../../controller/verify_login.php';
 
+if (isset($_SESSION['user'])) {
+    $user1 = $_SESSION['id'];
+    $role = $_SESSION['role'];
+    if ($role == 2) {
+        header('Location: ../../login.php');
+    }
+}else{
+    header('Location: ../../login.php');
+}
+//==============================================================================
 // Fetching data using the previously defined functions
 $totalContractsBySponsor = StatSponsorController::getTotalContractsBySponsor();
 $totalRevenueBySponsor = StatSponsorController::getTotalRevenueBySponsor();
