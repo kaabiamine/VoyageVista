@@ -46,7 +46,7 @@ $totalRevenueJsArray = json_encode($totalRevenueData);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php require_once('../components/head.php'); ?>
+    <?php require_once('../components-sponsor/head.php'); ?>
     <title>Statistics Dashboard</title>
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -73,13 +73,9 @@ $totalRevenueJsArray = json_encode($totalRevenueData);
         ]
     ];
 
-    require_once('../components/navbar.php'); ?>
+    require_once('../components-sponsor/navbarSponsor.php'); ?>
 
-    <div class="container-fluid page-body-wrapper">
-        <!-- Settings Panel -->
-        <?php require_once('../components/theme-setting-wrapper.php'); ?>
-        <!-- Sidebar -->
-        <?php require_once('../components/sidebar.php'); ?>
+
 
 
         <div class="main-panel">
@@ -132,13 +128,7 @@ $totalRevenueJsArray = json_encode($totalRevenueData);
             </footer>
             <!-- partial -->
         </div>
-        <!-- main-panel ends -->
-    </div>
-    <!-- page-body-wrapper ends -->
-</div>
-<!-- container-scroller -->
 
-<!-- Prepare data and render charts using Chart.js -->
 <script>
     // Convert PHP arrays to JavaScript arrays
     const sponsorNames = <?php echo $sponsorNamesJsArray; ?>;
