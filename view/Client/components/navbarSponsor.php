@@ -24,11 +24,11 @@
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
                     <div class="dropdown-menu rounded">
-                        <a href="profile.php" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
+                        <a href="../Profile.php" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
                         <a href="#" class="dropdown-item"><i class="fas fa-comment-alt me-2"></i> Inbox</a>
                         <a href="#" class="dropdown-item"><i class="fas fa-bell me-2"></i> Notifications</a>
-                        <a href="change_password.php" class="dropdown-item"><i class="fas fa-cog me-2"></i> Change password</a>
-                        <a href="../../model/logout.php" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Log Out</a>
+                        <a href="../change_password.php" class="dropdown-item"><i class="fas fa-cog me-2"></i> Change password</a>
+                        <a href="../../../model/logout.php" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Log Out</a>
                     </div>
                 </div>
             </div>
@@ -66,8 +66,8 @@
                         <a href="#" class="dropdown-item">404 Page</a>
                     </div>
                 </div>
-                <a href="./AfficherReservations.php" class="nav-item nav-link active">Reservation</a>
-                <a href="./SponsorPack/AfficherPacks.php" class="nav-item nav-link">Sponsors</a>
+                <a href="../AfficherReservations.php" class="nav-item nav-link ">Reservation</a>
+                <a href="./AfficherPacks.php" class="nav-item nav-link active">Sponsors</a>
             </div>
             <a href="" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
         </div>

@@ -150,8 +150,6 @@ $user = $user->getUser($user1['id']);
             </div>
         </div>
     </div>
-    <!-- partial -->
-    <!-- partial:partials/_sidebar.html -->
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
             <li class="nav-item">
@@ -228,14 +226,14 @@ $user = $user->getUser($user1['id']);
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="collapse" href="./AfficherReservations.php" aria-expanded="false" aria-controls="charts">
+                <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
                     <i class="typcn typcn-chart-pie-outline menu-icon"></i>
-                    <span class="menu-title">Gestion Reservation & payement</span>
+                    <span class="menu-title">Gestion Reservation </span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="charts">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="./AfficherReservations.php">Reservations</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../AfficherReservations.php">Reservations</a></li>
                     </ul>
                 </div>
             </li>
@@ -247,19 +245,20 @@ $user = $user->getUser($user1['id']);
                 </a>
                 <div class="collapse" id="tables">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="pages/tables/basic-table.php">Accounts</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../AfficherReservations.php">Reservations</a></li>
                     </ul>
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+                <a class="nav-link" data-toggle="collapse" href="./Sponsor" aria-expanded="false" aria-controls="icons">
                     <i class="typcn typcn-compass menu-icon"></i>
-                    <span class="menu-title">Icons</span>
+                    <span class="menu-title">Gestion Sponsor</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="icons">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="pages/icons/mdi.html">Mdi icons</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="./Sponsor/AfficherSponsors.php">Sponsors</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="./SponsorPack/AfficherPacks.php">Mdi icons</a></li>
                     </ul>
                 </div>
             </li>
@@ -307,4 +306,3 @@ $user = $user->getUser($user1['id']);
     </nav>
 
 
-<!-- partial -->

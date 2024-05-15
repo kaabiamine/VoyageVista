@@ -68,8 +68,8 @@ $contracts = $sponsorContractController->getAllContracts(); // Retrieve all spon
                                         <td><?php echo htmlspecialchars($contract['sponsor_name']); ?></td>
                                         <td><?php echo htmlspecialchars($contract['pack_name']); ?></td>
                                         <td>
-                                            <a href="ModifierSponsorContract.php?id=<?php echo htmlspecialchars($contract['id']); ?>" class="btn btn-warning btn-sm">Edit</a>
-                                            <a href="DeleteSponsorContract.php?id=<?php echo htmlspecialchars($contract['id']); ?>&action=delete" class="btn btn-danger btn-sm">Delete</a>
+<!--                                            <a href="ModifierSponsorContract.php?id=--><?php //echo htmlspecialchars($contract['id']); ?><!--" class="btn btn-warning btn-sm">Edit</a>-->
+<!--                                            <a href="DeleteSponsorContract.php?id=--><?php //echo htmlspecialchars($contract['id']); ?><!--&action=delete" class="btn btn-danger btn-sm">Delete</a>-->
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

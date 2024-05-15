@@ -247,19 +247,22 @@ $user = $user->getUser($user1['id']);
                 </a>
                 <div class="collapse" id="tables">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="../AfficherReservations.php">Accounts</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../AfficherReservations.php">Reservations</a></li>
                     </ul>
                 </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
                     <i class="typcn typcn-compass menu-icon"></i>
-                    <span class="menu-title">Icons</span>
+                    <span class="menu-title">Gestion Sponsor</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="icons">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="pages/icons/mdi.html">Mdi icons</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../Sponsor/">Stats</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../Sponsor/AfficherSponsors.php">Sponsors</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../SponsorPack/AfficherPacks.php">Sponsor Packs</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="../SponsorContract/AfficherSponsorContracts.php">Sponsor Contracts</a></li>
                     </ul>
                 </div>
             </li>
