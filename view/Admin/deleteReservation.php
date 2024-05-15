@@ -1,8 +1,20 @@
 <?php
-include_once '../../Model/ReservationModel.php';
-include_once "../../Controller/ReservationController.php";
+include_once '../../model/ReservationModel.php';
+include_once "../../controller/ReservationController.php";
 
-// Assuming you have a `ReservationController` class with the necessary methods
+// USER VERIFICATION ===========================================================
+include_once '../../controller/verify_login.php';
+
+if (isset($_SESSION['user'])) {
+    $user1 = $_SESSION['id'];
+    $role = $_SESSION['role'];
+    if ($role == 2) {
+        header('Location: ../login.php');
+    }
+}else{
+    header('Location: ../login.php');
+}
+//==============================================================================
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // If submitted using GET (not recommended for deleting data), display an error message
